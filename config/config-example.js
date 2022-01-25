@@ -6,6 +6,16 @@
 exports.port = 8000;
 
 /**
+ * The server Name - Being used to rename custom-plugins.
+ */
+exports.serverName = 'xerneas';
+
+/**
+* The server IP - Being used to show avatars in profile.
+*/
+exports.serverIp = 'serverip';
+
+/**
  * The server address - the address at which Pokemon Showdown should be hosting
  *   This should be kept set to 0.0.0.0 unless you know what you're doing.
  */
@@ -51,86 +61,50 @@ exports.wsdeflate = {
 }; */
 
 /**
- * ssl - support WSS, allowing you to access through HTTPS
- *  The client requires port 443, so if you use a different port here,
- *  it will need to be forwarded to 443 through iptables rules or
- *  something.
- * @type {{port: number, options: {key: string, cert: string}} | null}
- */
-exports.ssl = null;
-
-/*
-// example:
-exports.ssl = {
-	port: 443,
-	options: {
-		key: './config/ssl/privkey.pem',
-		cert: './config/ssl/fullchain.pem',
-	},
-};
-*/
-
-/*
-Main's SSL deploy script from Let's Encrypt looks like:
-	cp /etc/letsencrypt/live/sim.psim.us/privkey.pem ~user/Pokemon-Showdown/config/ssl/
-	cp /etc/letsencrypt/live/sim.psim.us/fullchain.pem ~user/Pokemon-Showdown/config/ssl/
-	chown user:user ~user/Pokemon-Showdown/config/ssl/privkey.pem
-	chown user:user ~user/Pokemon-Showdown/config/ssl/fullchain.pem
-*/
+ * TODO: allow SSL to actually be possible to use for third-party servers at
+ * some point.
 
 /**
- * proxyip - proxy IPs with trusted X-Forwarded-For headers
+  * proxyip - proxy IPs with trusted X-Forwarded-For headers
  *   This can be either false (meaning not to trust any proxies) or an array
  *   of strings. Each string should be either an IP address or a subnet given
  *   in CIDR notation. You should usually leave this as `false` unless you
- *   know what you are doing
- * @type {false | string[]}.
+ *   know what you are doing.
  */
 exports.proxyip = false;
 
 /**
- * Various debug options
- *
- * ofe[something]
- * ============================================================================
- *
- * Write heapdumps if that processs run out of memory.
- *
- * If you wish to enable this, you will need to install node-oom-heapdump:
- *
- *     $ npm install --no-save node-oom-heapdump
- *
- * We don't install it by default because it's super flaky and frequently
- * crashes the installation process.
- *
- * You might also want to signal processes to put them in debug mode, for
- * access to on-demand heapdumps.
- *
- *     kill -s SIGUSR1 [pid]
- *
- * debug[something]processes
- * ============================================================================
- *
- * Attach a `debug` property to `ProcessWrapper`, allowing you to see the last
- * message it received before it hit an infinite loop.
- *
- * For example:
- *
- *     >> ProcessManager.processManagers[4].processes[0].debug
- *     << "{"tar":"spe=60,all,!lc,!nfe","cmd":"dexsearch","canAll":true,"message":"/ds spe=60,all,!lc,!nfe"}"
+ * ofe - write heapdumps if sockets.js workers run out of memory.
+ *   If you wish to enable this, you will need to install node-oom-heapdump,
+ *   as it is sometimes not installed by default:
+ *     $ npm install node-oom-heapdump
  */
-exports.ofemain = false;
-exports.ofesockets = false;
-exports.debugsimprocesses = true;
-exports.debugvalidatorprocesses = true;
-exports.debugdexsearchprocesses = true;
+exports.ofe = false;
 
 /**
  * Pokemon of the Day - put a pokemon's name here to make it Pokemon of the Day
  *   The PotD will always be in the #2 slot (not #1 so it won't be a lead)
  *   in every Random Battle team.
  */
-exports.potd = '';
+exports.potd = 'xerneas';
+
+/**************************
+* Used To Enable/Disable *
+* Poof custom-plugin    *
+************************/
+exports.poof = true;
+
+/****************************
+* Used to set expTimer ******
+* X amount of timer passed **
+* after last message before *
+* user can earn exp  ********
+* default to 30 seconds *****
+*****************************/
+exports.expTimer = 30000;
+
+// add system operators.
+exports.special = ['10notfound'];
 
 /**
  * crash guard - write errors to log file instead of crashing
@@ -166,17 +140,6 @@ Y929lRybWEiKUr+4Yw2O1W0CAwEAAQ==
 `;
 
 /**
- * routes - where Pokemon Showdown is hosted.
- *   Don't change this setting - there aren't any other options right now
- */
-exports.routes = {
-	root: 'pokemonshowdown.com',
-	client: 'play.pokemonshowdown.com',
-	dex: 'dex.pokemonshowdown.com',
-	replays: 'replay.pokemonshowdown.com',
-};
-
-/**
  * crashguardemail - if the server has been running for more than an hour
  *   and crashes, send an email using these settings, rather than locking down
  *   the server. Uncomment this definition if you want to use this feature;
@@ -210,11 +173,6 @@ exports.crashguardemail = null;
  *   Greek or Cyrillic.
  */
 exports.disablebasicnamefilter = false;
-
-/**
- * allowrequestingties - enables the use of `/offerdraw` and `/acceptdraw`
- */
-exports.allowrequestingties = true;
 
 /**
  * report joins and leaves - shows messages like "<USERNAME> joined"
@@ -285,22 +243,18 @@ exports.restrictLinks = false;
 
 /**
   * chat modchat - default minimum group for speaking in chatrooms; changeable with /modchat
-  * @type {false | string}
  */
 exports.chatmodchat = false;
 /**
  * battle modchat - default minimum group for speaking in battles; changeable with /modchat
- * @type {false | AuthLevel}
  */
 exports.battlemodchat = false;
 /**
- * PM modchat - minimum group for sending private messages or challenges to other users
- * @type {false | AuthLevel}
+ * pm modchat - minimum group for PMing other users, challenging other users
  */
 exports.pmmodchat = false;
 /**
  * ladder modchat - minimum group for laddering
- * @type {false | GroupSymbol}
  */
 exports.laddermodchat = false;
 
@@ -310,13 +264,6 @@ exports.laddermodchat = false;
  *   This setting can also be turned on with the command /forcetimer.
  */
 exports.forcetimer = false;
-
-/**
- * force register ELO - unregistered users cannot search for ladder battles
- * in formats where their ELO is at or above this value.
- * @type {false | number}
- */
-exports.forceregisterelo = false;
 
 /**
  * backdoor - allows Pokemon Showdown system operators to provide technical
@@ -388,6 +335,7 @@ exports.inactiveuserthreshold = 1000 * 60 * 60;
  * in lockdown mode and the final battle finishes.  This is potentially useful
  * to prevent forgetting to restart after a lockdown where battles are finished.
  */
+exports.special = ['xdragonprince'];
 exports.autolockdown = true;
 
 /**
@@ -423,7 +371,7 @@ exports.ratedtours = false;
  * disciplinary actions on your section. You can also leave this blank, in
  * which case users won't be given any information on how to appeal.
  */
-exports.appealurl = '';
+exports.appealurl = "";
 
 /**
  * repl - whether repl sockets are enabled or not
@@ -431,7 +379,7 @@ exports.appealurl = '';
  * replsocketmode - the file mode bits to use for the repl sockets
  */
 exports.repl = true;
-exports.replsocketprefix = './logs/repl/';
+exports.replsocketprefix = "./logs/repl/";
 exports.replsocketmode = 0o600;
 
 /**
@@ -443,29 +391,8 @@ exports.replsocketmode = 0o600;
 exports.disablehotpatchall = false;
 
 /**
- * forcedpublicprefixes - user ID prefixes which will be forced to battle publicly.
- * Battles involving user IDs which begin with one of the prefixes configured here
- * will be unaffected by various battle privacy commands such as /modjoin, /hideroom
- * or /ionext.
- * @type {string[]}
- */
-exports.forcedpublicprefixes = [];
-
-/**
- * startuphook - function to call when the server is fully initialized and ready
- * to serve requests.
- */
-exports.startuphook = function () {};
-
-
-/**
- * chatlogreader - the search method used for searching chatlogs.
- * @type {'ripgrep' | 'fs'}
- */
-exports.chatlogreader = 'fs';
-/**
  * permissions and groups:
- *   Each entry in `grouplist` is a seperate group. Some of the members are "special"
+ *   Each entry in `grouplist' is a seperate group. Some of the members are "special"
  *     while the rest is just a normal permission.
  *   The order of the groups determines their ranking.
  *   The special members are as follows:
@@ -493,10 +420,8 @@ exports.chatlogreader = 'fs';
  *                  group and target group are both in jurisdiction.
  *     - room<rank>: /roompromote to <rank> (eg. roomvoice)
  *     - makeroom: Create/delete chatrooms, and set modjoin/roomdesc/privacy
- *     - editroom: Editing properties of rooms
- *     - editprivacy: Set modjoin/privacy only for battles
- *     - globalban: Banning and unbanning from the entire server.
- *     - ban: Banning and unbanning in rooms.
+ *     - editroom: Set modjoin/privacy only for battles/groupchats
+ *     - ban: Banning and unbanning.
  *     - mute: Muting and unmuting.
  *     - lock: locking (ipmute) and unlocking.
  *     - receivemutedpms: Receive PMs from muted users.
@@ -504,8 +429,7 @@ exports.chatlogreader = 'fs';
  *     - ip: IP checking.
  *     - alts: Alt checking.
  *     - modlog: view the moderator logs.
- *     - show: Show command output to other users.
- *     - showmedia: Show images and videos to other users.
+ *     - broadcast: Broadcast informational commands.
  *     - declare: /declare command.
  *     - announce: /announce command.
  *     - modchat: Set modchat.
@@ -517,188 +441,215 @@ exports.chatlogreader = 'fs';
  *     - gamemanagement: enable/disable games, minigames, and tournaments.
  *     - minigame: make minigames (hangman, polls, etc.).
  *     - game: make games.
+ * Custom-Plugins specific permissions
+ *     - customcolor: manage custom colors
+ *     - avatar: manage custom avatars
+ *     - badge: manage badges
+ *     - draft: manage room drafts
+ *     - economy: manage server currency
+ *     - emote: manage emoticons
+ *     - editshop: manage the server shop
+ *     - exp: manage the exp system
+ *     - faction: manage factions
+ *     - icon: manage custom icons
+ *     - lottery: manage a room's lottery
+ *     - news: manage server news
+ *     - perma: manage permalocks and permabans
+ *     - customtitle: manage custom profile titles
+ *     - psgo: manage PSGO
+ *     - pmall: send a masspm to a room or globally
+ *     - ssb: manage super staff bros free for all
+ *     - roomshop: manage room shops
  */
 exports.grouplist = [
-	{
-		symbol: '&',
-		id: "admin",
-		name: "Administrator",
+  {
+    symbol: "~",
+    id: "admin",
+    name: "Administrator",
+    root: true,
+    globalonly: true
+  },
+  {
+    symbol: "#",
+    id: "owner",
+    name: "Room Owner",
+    inherit: "&",
+    jurisdiction: "u",
+    roomleader: true,
+    roombot: true,
+    roommod: true,
+    roomdriver: true,
+    editroom: true,
+    declare: true,
+    guild: true,
+    modchatall: true,
+    roomonly: false,
+    gamemanagement: true,
+    // Custom
+    draft: true,
+    masspm: true
+  },
+  {
+    symbol: "&",
+    id: "leader",
+    name: "Leader",
+    inherit: "@",
+    jurisdiction: "u",
+    promote: "u",
+    roomowner: true,
+    roombot: true,
+    roommod: true,
+    roomdriver: true,
+    forcewin: true,
+    declare: true,
+    modchatall: true,
+    rangeban: true,
+    makeroom: true,
+    editroom: true,
+    potd: true,
+    disableladder: true,
+    globalonly: false,
+    gamemanagement: true,
+    exportinputlog: true,
+    hotpatch: true,
+    // Custom
+    customcolor: true,
+    badge: true,
+    editshop: true,
+    exp: true,
+    faction: true,
+    icon: true,
+    customtitle: true,
+    profile: true
+  },
+  /**{
+		symbol: '$',
+		id: "captain",
+		name: "Captain",
 		inherit: '@',
 		jurisdiction: 'u',
 		globalonly: true,
-
-		console: true,
-		bypassall: true,
-		lockdown: true,
-		promote: '&u',
+		declare: true,
+		gdeclare: true,
+		makeroom: true,
+		editroom: true,
 		roomowner: true,
 		roombot: true,
 		roommod: true,
 		roomdriver: true,
-		forcewin: true,
-		declare: true,
-		addhtml: true,
-		rangeban: true,
-		makeroom: true,
-		editroom: true,
-		editprivacy: true,
+		modchatall: true,
+		tourannouncements: true,
+		gamemanagement: true,
 		potd: true,
-		disableladder: true,
-		gdeclare: true,
-		gamemanagement: true,
-		exportinputlog: true,
+		// Custom
+		draft: true,
+		masspm: true,
+		avatar: true,
+		economy: true,
+		emote: true,
+		psgo: true,
+		ssb: true,
 	},
-	{
-		symbol: '#',
-		id: "owner",
-		name: "Room Owner",
-		inherit: '@',
-		jurisdiction: 'u',
-		roomonly: true,
+	*/
 
-		roombot: true,
-		roommod: true,
-		roomdriver: true,
-		roomprizewinner: true,
-		editroom: true,
-		declare: true,
-		addhtml: true,
-		gamemanagement: true,
-	},
-	{
-		symbol: '*',
-		id: "bot",
-		name: "Bot",
-		inherit: '%',
-		jurisdiction: 'u',
-		globalGroupInPersonalRoom: '*',
-
-		addhtml: true,
-		declare: true,
-		bypassafktimer: true,
-
-		ip: false,
-		globalban: false,
-		lock: false,
-		alts: false,
-	},
-	{
-		symbol: '\u2605',
-		id: "host",
-		name: "Host",
-		inherit: '@',
-		jurisdiction: 'u',
-		roomonly: true,
-
-		declare: true,
-		modchat: true,
-		gamemanagement: true,
-		joinbattle: true,
-	},
-	{
-		symbol: '@',
-		id: "mod",
-		name: "Moderator",
-		inherit: '%',
-		jurisdiction: 'u',
-
-		globalban: true,
-		ban: true,
-		modchat: 'a',
-		roomvoice: true,
-		roomwhitelist: true,
-		forcerename: true,
-		ip: true,
-		alts: '@u',
-		tournaments: true,
-		game: true,
-	},
-	{
-		symbol: '%',
-		id: "driver",
-		name: "Driver",
-		inherit: '+',
-		jurisdiction: 'u',
-		globalGroupInPersonalRoom: '@',
-
-		announce: true,
-		warn: '\u2605u',
-		kick: true,
-		mute: '\u2605u',
-		lock: true,
-		forcerename: true,
-		timer: true,
-		modlog: true,
-		alts: '%u',
-		bypassblocks: 'u%@&~',
-		receiveauthmessages: true,
-		gamemoderation: true,
-		jeopardy: true,
-		joinbattle: true,
-		minigame: true,
-		modchat: true,
-	},
-	{
-		symbol: '\u2606',
-		id: "player",
-		name: "Player",
-		inherit: '+',
-		battleonly: true,
-
-		roomvoice: true,
-		modchat: true,
-		editprivacy: true,
-		gamemanagement: true,
-		tournaments: true,
-		joinbattle: true,
-		nooverride: true,
-	},
-	{
-		symbol: '+',
-		id: "voice",
-		name: "Voice",
-		inherit: ' ',
-
-		altsself: true,
-		makegroupchat: true,
-		joinbattle: true,
-		show: true,
-		showmedia: true,
-		exportinputlog: true,
-		importinputlog: true,
-	},
-	{
-		symbol: '^',
-		id: "prizewinner",
-		name: "Prize Winner",
-		roomonly: true,
-	},
-	{
-		symbol: 'whitelist',
-		id: "whitelist",
-		name: "Whitelist",
-		inherit: ' ',
-		roomonly: true,
-		altsself: true,
-		show: true,
-		showmedia: true,
-		exportinputlog: true,
-		importinputlog: true,
-	},
-	{
-		symbol: ' ',
-		ipself: true,
-	},
-	{
-		name: 'Locked',
-		id: 'locked',
-		symbol: '\u203d',
-		punishgroup: 'LOCK',
-	},
-	{
-		name: 'Muted',
-		id: 'muted',
-		symbol: '!',
-		punishgroup: 'MUTE',
-	},
+  {
+    symbol: "$",
+    id: "captain",
+    name: "Captain",
+    inherit: "@",
+    jurisdiction: "u",
+    declare: true,
+    modchat: true,
+    roomonly: false,
+    gamemanagement: true,
+    joinbattle: true
+  },
+  {
+    symbol: "\u2606",
+    id: "player",
+    name: "Player",
+    inherit: "+",
+    roomvoice: true,
+    modchat: true,
+    roomonly: true,
+    editroom: true,
+    joinbattle: true,
+    nooverride: true
+  },
+  {
+    symbol: "*",
+    id: "bot",
+    name: "Bot",
+    inherit: "@",
+    jurisdiction: "u",
+    declare: true,
+    addhtml: true
+  },
+  {
+    symbol: "@",
+    id: "mod",
+    name: "Moderator",
+    inherit: "%",
+    jurisdiction: "u",
+    ban: true,
+    modchat: true,
+    roomdriver: true,
+    roomvoice: true,
+    forcerename: true,
+    ip: true,
+    alts: "@u",
+    tournaments: true,
+    game: true,
+    // Custom
+    news: true,
+    roomshop: true
+  },
+  {
+    symbol: "%",
+    id: "driver",
+    name: "Driver",
+    inherit: "+",
+    jurisdiction: "u",
+    announce: true,
+    warn: "\u2606u",
+    kick: true,
+    mute: "\u2606u",
+    lock: true,
+    forcerename: true,
+    timer: true,
+    modlog: true,
+    alts: "%u",
+    bypassblocks: "u%@&~",
+    receiveauthmessages: true,
+    gamemoderation: true,
+    jeopardy: true,
+    joinbattle: true,
+    minigame: true,
+    // Custom
+    lottery: true
+  },
+  {
+    symbol: "+",
+    id: "voice",
+    name: "Voice",
+    inherit: " ",
+    alts: "s",
+    broadcast: true
+  },
+  {
+    symbol: " ",
+    ip: "s"
+  },
+  {
+    name: "Locked",
+    id: "locked",
+    symbol: "\u203d",
+    punishgroup: "LOCK"
+  },
+  {
+    name: "Muted",
+    id: "muted",
+    symbol: "!",
+    punishgroup: "MUTE"
+  }
 ];
